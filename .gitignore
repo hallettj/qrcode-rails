@@ -5,3 +5,5 @@ db/*.sqlite3
 data.dump
 db/data.yml
 config/database.yml
+.*swp
+.*swo
