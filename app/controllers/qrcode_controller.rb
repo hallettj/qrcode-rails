@@ -50,8 +50,9 @@ class QrcodeController < ApplicationController
 
   def image
     @qrimage = QRImage.find_by_md5(params[:md5])
-	if @qrimage
+    if @qrimage
       headers['Cache-Control'] = 'public; max-age=2592000' # cache image for a month
+      headers['Etag'] = nil
       send_data @qrimage.data, :filename => @qrimage.filename, :disposition => 'inline', :type => "image/png"
     else
       render :nothing => true, :status => 404
