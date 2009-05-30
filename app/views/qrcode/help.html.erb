@@ -43,9 +43,11 @@
 
  
 <div id="suggestion">
-  <h2>Comments or Suggestions</h2>
-  <div>
-    Please leave me a comment at <a href="http://www.reality.hk/articles/2008/04/27/823/">this post</a>.
-  </div>
-
+  <% expensive_fragment = Rails.cache.read('expensive_fragment') %>
+  <% if expensive_fragment.nil? %>
+    <% expensive_fragment = '<h2>Some content that takes a long time to render.</h2>' %>
+    <% sleep 3 %>
+    <% Rails.cache.write('expensive_fragment', expensive_fragment, :expires_in => 5.minutes) %>
+  <% end %>
+  <%= expensive_fragment %>
 </div>
