@@ -49,6 +49,7 @@ class QrcodeController < ApplicationController
     headers['Expires'] = (Time.zone.now + 1.month).strftime '%a, %d %b %Y %H:%M:%S %Z'
     headers['Cache-Control'] = 'public; max-age=2592000' # cache image for a month
     headers['Etag'] = nil
+    sleep 1  # 1 second artificial delay.
     render :template => 'qrcode/help'
   end
 
