@@ -47,6 +47,7 @@ class QrcodeController < ApplicationController
     @advance = params[:advance]
     @msg = params[:msg] || session[:msg]
     headers['Etag'] = nil
+    sleep 1  # 1 second artificial delay.
     render :template => 'qrcode/help'
   end
 
