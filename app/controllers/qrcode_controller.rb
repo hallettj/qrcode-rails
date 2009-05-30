@@ -9,6 +9,7 @@ class QrcodeController < ApplicationController
     session[:msg] = @msg
 
     @qrimage = QRImage.find_or_create(params)
+    unshift_recent_qrimage(@qrimage.md5)
 
     if request.xhr?
       @imgurl = "#{@createurl}?version=#{@qrimage.version}&ecc=#{@qrimage.ecc}&msg=#{@qrimage.message}"
@@ -65,6 +66,19 @@ class QrcodeController < ApplicationController
     end
   end
 
+  def recent
+    @images = recent_qrimages.map do |md5|
+      url_for(:action => :image, :md5 => md5)
+    end
+    headers['Expires'] = (Time.zone.now + 1.minute).strftime '%a, %d %b %Y %H:%M:%S %Z'
+    headers['Cache-Control'] = 'public; max-age=60' # cache image for a month
+    headers['Etag'] = nil
+    respond_to do |format|
+      format.json { render :json => @images }
+      format.xml  { render :xml  => @images }
+    end
+  end
+
   protected
     def default_qrurl
       @createurl = url_for(:only_path => false, :controller => :qrcode, :action => :create)
@@ -95,5 +109,17 @@ class QrcodeController < ApplicationController
       else
         render :action => :help
       end
+    end
+
+    # Returns the md5 hashes for the three most recent qrimage lookups.
+    def recent_qrimages
+      Rails.cache.read('recent_qrimages') || []
+    end
+
+    # Prepends an md5 to the list of recent qrimage lookups.
+    def unshift_recent_qrimage(md5)
+      Rails.cache.write('recent_qrimages',
+                        ([md5] + recent_qrimages)[0..2],
+                        :expires_in => 1.day)
     end
 end
