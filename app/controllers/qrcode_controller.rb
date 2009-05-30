@@ -46,8 +46,6 @@ class QrcodeController < ApplicationController
   def help
     @advance = params[:advance]
     @msg = params[:msg] || session[:msg]
-    headers['Expires'] = (Time.zone.now + 1.month).strftime '%a, %d %b %Y %H:%M:%S %Z'
-    headers['Cache-Control'] = 'public; max-age=2592000' # cache image for a month
     headers['Etag'] = nil
     render :template => 'qrcode/help'
   end
@@ -55,8 +53,6 @@ class QrcodeController < ApplicationController
   def image
     @qrimage = QRImage.find_by_md5(params[:md5])
     if @qrimage
-      headers['Expires'] = (Time.zone.now + 1.month).strftime '%a, %d %b %Y %H:%M:%S %Z'
-      headers['Cache-Control'] = 'public; max-age=2592000' # cache image for a month
       headers['Etag'] = nil
       send_data @qrimage.data, :filename => @qrimage.filename, :disposition => 'inline', :type => "image/png"
     else
