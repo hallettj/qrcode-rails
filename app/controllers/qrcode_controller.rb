@@ -47,11 +47,9 @@ class QrcodeController < ApplicationController
   def help
     @advance = params[:advance]
     @msg = params[:msg] || session[:msg]
-    headers['Expires'] = (Time.zone.now + 1.month).strftime '%a, %d %b %Y %H:%M:%S %Z'
-    headers['Cache-Control'] = 'public; max-age=2592000' # cache image for a month
-    headers['Etag'] = nil
-    sleep 1  # 1 second artificial delay.
-    render :template => 'qrcode/help'
+    @recent_images = recent_qrimages
+    expires_in 1.minute, :public => true
+    fresh_when :etag => @recent_images
   end
 
   def image

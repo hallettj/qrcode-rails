@@ -20,7 +20,11 @@
   
   <div id="footer">
       <h2>Recently generated QRCodes</h2>
-      <div id="recent-qrimages"></div>
+      <div id="recent-qrimages">
+        <% @recent_images.each do |md5| -%>
+          <%= image_tag url_for(:action => 'image', :md5 => md5) %>
+        <% end -%>
+      </div>
 
       Powered by
       <%=link_to "rQRCode", "http://whomwah.com/2008/02/24/rqrcode-a-ruby-library-for-encoding-qr-codes" %>,
