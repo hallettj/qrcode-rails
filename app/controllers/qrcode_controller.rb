@@ -66,19 +66,6 @@ class QrcodeController < ApplicationController
     end
   end
 
-  def recent
-    @images = recent_qrimages.map do |md5|
-      url_for(:action => :image, :md5 => md5)
-    end
-    headers['Expires'] = (Time.zone.now + 1.minute).strftime '%a, %d %b %Y %H:%M:%S %Z'
-    headers['Cache-Control'] = 'public; max-age=60' # cache image for a month
-    headers['Etag'] = nil
-    respond_to do |format|
-      format.json { render :json => @images }
-      format.xml  { render :xml  => @images }
-    end
-  end
-
   protected
     def default_qrurl
       @createurl = url_for(:only_path => false, :controller => :qrcode, :action => :create)
